@@ -1,0 +1,202 @@
+@font-face {
+  font-family: Type Grotesk;
+  src: url('/static/fonts/Typo Grotesk Rounded Demo.otf');
+}
+
+
+body {
+    margin: 0;
+    font-family: 'Type Grotesk';
+    background-color: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    orientation: landscape;
+}
+
+.container {
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game {
+    height: 90vh;
+    width: 90vw;
+    display: flex;
+    flex-direction: row;
+    background-color: #FF3333;
+    border-radius: 30px;
+    border: 2px #FF6666 solid;
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.no-selectable {
+    -webkit-touch-callout: none;  /* iPhone OS, Safari */
+    -webkit-user-select: none;    /* Chrome, Safari 3 */
+    -khtml-user-select: none;     /* Safari 2 */
+    -moz-user-select: none;       /* Firefox */
+    -ms-user-select: none;        /* IE10+ */
+    user-select: none;
+}
+
+.logo {
+    width: 150px;
+    align-self: center;
+}
+
+.users-panel {
+    max-height: 90%;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.users-panel ul {
+    padding-inline-start: 0px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.users-panel ul li {
+    border-bottom: 1px #990000 solid;
+    padding: 10px;
+}
+
+.user-img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-name {
+    font-size: 25px;
+    color: #4e0000;
+}
+
+.user-rank {
+    font-size: 15px;
+    color: #610202;
+}
+
+.center-panel {
+    flex-grow: 8;
+    flex-direction: column;
+}
+
+.canvas {
+    background-color: white;
+    border-left: 1px gray solid;
+    border-right: 1px gray solid;
+    flex-grow: 1;
+}
+
+.bottom-center-pannel {
+    min-height: 150px;
+    flex-grow: 1;
+}
+
+.answers {
+    flex-grow: 1;
+    background-color: #d62b2b;
+}
+
+.chat {
+    flex-grow: 1;
+    background-color: #a00b0b;
+}
+
+.side-panel {
+    padding: 20px 10px;
+    flex-direction: column;
+}
+
+.tool-panel {
+    background-color: #d62b2b;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    border-radius: 10px;
+    max-width: 200px;
+}
+
+.tool-btn {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: tomato;
+    border-style: none;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.tool-btn:hover {
+    background-color: #FF6666;
+}
+
+.tooltip {
+    visibility: hidden;
+    background-color: #911c1c;
+    font-family: 'Type Grotesk';
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 3px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    margin-top: 40px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color:  transparent transparent #911c1c transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tool-btn:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tool-icon {
+    height: 24px;
+    width: 24px;
+    opacity: 0.8;
+}
+
+.tricks {
+    position: fixed;
+    left: 50%;
+    background-color: blue;
+    color: white;
+}
