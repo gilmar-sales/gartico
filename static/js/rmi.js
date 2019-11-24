@@ -21,6 +21,10 @@ class RemoteObject {
         //
         this.socket.on('connect', () => {
             this.socket.emit('join', {username: 'gilmar', room: room});
+            
+            window.onbeforeunload = () => {
+                this.socket.emit('leave', {username: 'gilmar', room: room});
+            }
         });
 
         // When a request is called by the server, apply the method
@@ -58,6 +62,7 @@ class RemoteInvocator {
         // On connect join the socketIO room
         this.socket.on('connect', () => {
             this.socket.emit('join', {username: 'gilmar', room: room});
+
         });
 
         

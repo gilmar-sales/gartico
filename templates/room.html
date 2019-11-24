@@ -107,6 +107,7 @@
 <script type="text/javascript">
     
     const remote = new SVGCanvas('#svg', location.protocol, document.domain, location.port, location.pathname.split('/')[2]);
+    console.log(remote);
 
     const pickr = Pickr.create({
         el: '.color-picker',
@@ -146,7 +147,8 @@
     }).on('save', (color, instance) => {
         remote.setColor(color.toHEXA().toString());
     });
-
+    
+    
     function down() {
         const coords = d3.mouse(this);
         
