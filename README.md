@@ -16,3 +16,11 @@ set FLASK_APP=index.py
 
 flask run
 ```
+
+## Linux/Mac init
+
+```
+export FLASK_APP=index.py
+
+flask run
+```
