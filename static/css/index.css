@@ -1,0 +1,34 @@
+@font-face {
+    font-family: Type Grotesk;
+    src: url('/static/fonts/Typo Grotesk Rounded Demo.otf');
+}
+
+body {
+    color: white;
+}
+
+.top-nav {
+    background-color: #FF3333;
+}
+
+.category {
+    width: 150px;
+    height: 300px;
+    background-color: steelblue;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.category h1 {
+    background-color: teal;
+}
+
+.subcategory {
+    height: 25px;
+    border-style: none;
+}
+
+
+.subcategory a {
+}

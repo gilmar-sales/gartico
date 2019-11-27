@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf8">
-        <title>Gartico</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
-</html>
+{% extends "layout.html" %}
+{% block head %}
+<meta charset="utf8">
+<title>Gartico</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+
+
+{% block body %}
+<body>
+    <nav class="top-nav"></nav>
+    {% for categoria in categorias %}
+        <div class="category">
+        <h1>{{ categoria[1]|capitalize }}</h1>
+        {% for subcategoria in subcategorias %}
+            {% if categoria[0] == subcategoria[0] %}
+            <button class="subcategory" type="button"><a href="#">{{ subcategoria[1] }}</a></button>
+            {% endif %}
+        {% endfor %}
+        </div>
+    {% endfor %}
+</body>
+{% endblock %}

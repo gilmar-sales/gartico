@@ -1,3 +1,4 @@
+from mysql import connector
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from room import Room
@@ -5,11 +6,33 @@ from room import Room
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+mydb = connector.connect(
+    host='127.0.0.1',
+    user='root',
+    password='123456',
+    database='projeto_pp'
+)
+
+mycursor = mydb.cursor()
+
 rooms = {}
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    #query = "select id, nome from objetos where id_categoria = 1 and id_subcategoria=1"
+    #mydb.cmd_query(query)
+
+    mycursor.execute("select id, nome from categorias")
+    categorias = mycursor.fetchall()
+    
+    mycursor.execute("select id_categoria, nome from subcategorias")
+    
+    subcategorias = mycursor.fetchall()
+
+    for x in categorias:
+        print(x[0])
+
+    return render_template('index.html', categorias=categorias, subcategorias=subcategorias)
 
 @app.route('/room/<int:room_id>')
 def room(room_id):

@@ -1,11 +1,16 @@
 class Room:
     def __init__(self, id):
         self.id = id
+        self.playing = False 
+
         self.draw = []
+        self.last_action = -1
+
+        self.category = 0
+        self.subcategory = 0
+
         self.players = []
         self.currentDrawer = 0
-        self.playing = False 
-        self.last_action = -1
 
     def getPlayersCount(self):
         return len(self.players)
