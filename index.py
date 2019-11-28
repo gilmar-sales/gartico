@@ -1,43 +1,63 @@
-from mysql import connector
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from room import Room
+from database import DB
+from random import randint
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-mydb = connector.connect(
-    host='127.0.0.1',
-    user='root',
-    password='123456',
-    database='projeto_pp'
-)
-
-mycursor = mydb.cursor()
-
 rooms = {}
+categorias = {}
+subcategorias = {}
+
+for categoria in DB.getInstance().executeQuery("select id, nome from categorias"):
+    categorias.setdefault(categoria[0], str(categoria[1]).capitalize())
+
+for subcategoria in DB.getInstance().executeQuery("select id_categoria, id, nome from subcategorias"):
+    if not subcategorias.get(subcategoria[0]):
+        subcategorias.setdefault(subcategoria[0], {})
+    
+    subcategorias.get(subcategoria[0]).setdefault(subcategoria[1], str(subcategoria[2]).capitalize())
+
 
 @app.route('/')
 def index():
-    #query = "select id, nome from objetos where id_categoria = 1 and id_subcategoria=1"
-    #mydb.cmd_query(query)
 
-    mycursor.execute("select id, nome from categorias")
-    categorias = mycursor.fetchall()
+    existing_rooms = []
+    total_online = 0
     
-    mycursor.execute("select id_categoria, nome from subcategorias")
-    
-    subcategorias = mycursor.fetchall()
+    for room_id in rooms:
+        room = rooms[room_id]
 
-    for x in categorias:
-        print(x[0])
+        categoria = categorias.get(room.getCategory())
+        subcategoria = subcategorias.get(room.getCategory())
 
-    return render_template('index.html', categorias=categorias, subcategorias=subcategorias)
+        if subcategoria:
+            subcategoria = subcategoria.get(room.getSubcategory())
+
+        existing_rooms.append({
+            'id': room.getId(),
+            'category': categoria,
+            'subcategory': subcategoria,
+            'players': room.getPlayersCount()
+            })
+
+        total_online += room.getPlayersCount()
+
+    return render_template('index.html', total_online=total_online, categorias=categorias, subcategorias=subcategorias, existing_rooms=existing_rooms)
 
 @app.route('/room/<int:room_id>')
 def room(room_id):
 
-    return render_template('room.html', room_id = room_id)
+    room = rooms.get(room_id)
+
+    return render_template('room.html', room_id = room_id, players = room.getPlayers())
+
+@app.route('/create_room', methods=['POST'])
+def create_room():
+    id = randint(0, 300)
+    return id
 
 @socketio.on('join')
 def on_join(data):
@@ -52,7 +72,7 @@ def on_join(data):
         rooms.setdefault(int(data['room']), Room(int(data['room'])))
         room = rooms.get(int(data['room']))
 
-    room.addPlayer(request.sid)
+    room.addPlayer(request.sid, {'username': username, 'points': 0})
     room.sendDraw(socketio, request.sid)
 
     #start game with 2 or more players
