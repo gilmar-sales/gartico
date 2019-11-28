@@ -6,26 +6,42 @@ class Room:
         self.draw = []
         self.last_action = -1
 
-        self.category = 0
-        self.subcategory = 0
+        self.category = 1
+        self.subcategory = 1
 
-        self.players = []
+        self.players = {}
         self.currentDrawer = 0
+
+    def getId(self):
+        return self.id
+
+    def getPlayers(self):
+        players = []
+        for player in self.players:
+            players.append(self.players.get(player)['username'])
+
+        return players
 
     def getPlayersCount(self):
         return len(self.players)
-
-    def isPlaying(self):
-        return self.playing
     
-    def addPlayer(self, player):
-        self.players.append(player)
+    def addPlayer(self, sid, data):
+        self.players.setdefault(sid, data)
         print('the room ' + str(self.id) + ' now have ' + str(self.getPlayersCount()) + ' players!')
     
     def removePlayer(self, player):
-        self.players.remove(player)
+        self.players.pop(player)
         print('the room ' + str(self.id) + ' now have ' + str(self.getPlayersCount()) + ' players!')
         return not self.getPlayersCount() > 0
+
+    def getCategory(self):
+        return self.category
+    
+    def getSubcategory(self):
+        return self.subcategory
+
+    def isPlaying(self):
+        return self.playing
     
     def addCommand(self, command):
         if(command['method'] == 'clear'):
