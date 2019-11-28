@@ -20,6 +20,17 @@
             <img class="logo" src="{{ url_for('static', filename='img/logo.svg') }}">
 
             <ul>
+                {% for player in players %}
+
+                <li class="row">
+                        <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
+                        <div class="col">
+                            <a class="user-name">{{ player }}</a>
+                            <a id="pts-{{ player }}" class="user-rank">0pts</a>
+                        </div>
+                    </li>
+                {% endfor %}
+
                 <li class="row">
                     <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
                     <div class="col">
@@ -108,7 +119,6 @@
     
     const remote = new SVGCanvas('#svg', location.protocol, document.domain, location.port, location.pathname.split('/')[2]);
     console.log(remote);
-
     const pickr = Pickr.create({
         el: '.color-picker',
         theme: 'nano', // or 'monolith', or 'nano',
@@ -152,7 +162,7 @@
     function down() {
         const coords = d3.mouse(this);
         
-        remote.draw(coords[0], coords[1]);
+        remote.startDraw(coords[0], coords[1]);
     }
 
     function up() {

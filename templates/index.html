@@ -8,16 +8,97 @@
 
 {% block body %}
 <body>
-    <nav class="top-nav"></nav>
-    {% for categoria in categorias %}
-        <div class="category">
-        <h1>{{ categoria[1]|capitalize }}</h1>
-        {% for subcategoria in subcategorias %}
-            {% if categoria[0] == subcategoria[0] %}
-            <button class="subcategory" type="button"><a href="#">{{ subcategoria[1] }}</a></button>
-            {% endif %}
-        {% endfor %}
+    <div id="modal" class="modal">
+        <div class="create_room">
+            <div class="title">
+                <div class="left">
+                    Criar sala
+                </div>
+
+                <div class="right">
+                    <button onclick="document.getElementById('modal').style.display='none'">Fechar</button>
+                </div>
+            </div>
+            
+            <div class="content">
+                <form>
+                    <select name="category">
+                        {% for categoria in categorias %}
+                        <option value="category{{ categoria[0] }}">{{ categoria[1]|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>asd</label>
+                    <input name="subcategory" type="checkbox"/>
+                        {% for categoria in categorias %}
+                        <div class="category">
+                            <h1>{{ categoria[1]|capitalize }}</h1>
+                            
+                            {% for subcategoria in subcategorias %}
+                            {% if categoria[0] == subcategoria[0] %}
+                            <button class="subcategory" type="button"><a href="#">{{ subcategoria[1] }}</a></button>
+                            {% endif %}
+                            {% endfor %}
+                            
+                        </div>
+                        {% endfor %}
+                </form>
+            </div>
         </div>
-    {% endfor %}
+    </div>
+    <nav class="top-nav">
+        <div class="left">
+            <a class="home">Gartico</a>
+        </div>
+        <div class="right">
+            <button class="tool-btn"><a class="home">Login</a></button>
+            <button><a class="home">Cadastro</a></button>
+            <button><a class="home">Sobre</a></button>
+            
+        </div>
+    </nav>
+    <div class="container">
+        
+        <div class="rooms">
+            <div class="title">
+                <div class="left">
+                    Salas abertas
+                </div>
+                
+                <div class="right">
+                    <button onclick="document.getElementById('modal').style.display='flex'">Criar sala</button>
+                    <a style="align-self: center;">Jogadores em sala: {{ total_online }}</a>
+                </div>
+            </div>
+            <div class="content" style="display: flex; flex-direction: row;">
+                {% for room in existing_rooms %}
+                <div class="room-card">
+                    <div class="room-card-title" >
+                        <div>Sala {{ room['id'] }}</div>
+                    </div>
+                    <div class="room-card-content">
+                        <ul>
+                            <li>
+                            {{ room['category'] }}
+                            </li>
+                            <li>
+                             {{ room['subcategory'] }}
+                            </li>
+                            <li>
+                            {{ room['players'] }} jogando
+                            </li>
+                            <li>
+                                <button><a href="{{'/room/' + room['id']|string }}">Entrar</a></button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if not existing_rooms %}
+                    <h3>Não existe nenhuma sala disponível</h3>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </body>
 {% endblock %}

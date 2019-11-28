@@ -267,58 +267,58 @@ class SVGCanvas extends RemoteObject {
     setColor(color) {
         this.color = color;
     }
+    
+    startDraw(x, y) {
+        for(let i = this.data.length - 1; i > this.last_action; i--) {
+        this.data[i].clear();
+        this.data.pop();
+        }
 
+        switch (this.tool) {
+            case SVGCanvas.tools.pen:
+                this.current_draw = new Stroke(this.svg, 5, this.color);
+                this.current_draw.draw(x, y);
+            break;
+            case SVGCanvas.tools.rectangle:
+                this.current_draw = new Rectangle(this.svg, 5, this.color);
+                this.current_draw.draw(x,y);
+            break;
+            case SVGCanvas.tools.ellipse:
+                this.current_draw = new Ellipse(this.svg, 5, this.color);
+                this.current_draw.draw(x,y);
+            break;
+            case SVGCanvas.tools.triangle:
+                this.current_draw = new Triangle(this.svg, 5, this.color);
+                this.current_draw.draw(x,y);
+            break;
+            default:
+                break;
+        }
+
+        this.data.push(this.current_draw);
+        this.last_action++;
+        this.setDrawing(true);
+    }
+    
     draw(x, y) {
-        if(!this.drawing) { //starts a new draw
-            for(let i = this.data.length - 1; i > this.last_action; i--) {
-                this.data[i].clear();
-                this.data.pop();
-            }
-
-            switch (this.tool) {
-                case SVGCanvas.tools.pen:
-                    this.current_draw = new Stroke(this.svg, 5, this.color);
-                    this.current_draw.draw(x, y);
+        switch (remote.tool) {
+            case SVGCanvas.tools.pen :
+                this.current_draw.draw(x, y);
                 break;
-                case SVGCanvas.tools.rectangle:
-                    this.current_draw = new Rectangle(this.svg, 5, this.color);
-                    this.current_draw.draw(x,y);
+            case SVGCanvas.tools.eraser :
+                this.current_draw.draw(x, y);
                 break;
-                case SVGCanvas.tools.ellipse:
-                    this.current_draw = new Ellipse(this.svg, 5, this.color);
-                    this.current_draw.draw(x,y);
+            case SVGCanvas.tools.rectangle:
+                    this.current_draw.draw(x, y, this.shiftKey);
+                break;
+            case SVGCanvas.tools.ellipse:
+                    this.current_draw.draw(x, y, this.shiftKey);
                 break;
                 case SVGCanvas.tools.triangle:
-                    this.current_draw = new Triangle(this.svg, 5, this.color);
-                    this.current_draw.draw(x,y);
+                        this.current_draw.draw(x, y, this.shiftKey);
+                    break;
+            default:
                 break;
-                default:
-                    break;
-            }
-
-            this.data.push(this.current_draw);
-            this.last_action++;
-            this.setDrawing(true);
-        } else {
-            switch (remote.tool) {
-                case SVGCanvas.tools.pen :
-                    this.current_draw.draw(x, y);
-                    break;
-                case SVGCanvas.tools.eraser :
-                    this.current_draw.draw(x, y);
-                    break;
-                case SVGCanvas.tools.rectangle:
-                        this.current_draw.draw(x, y, this.shiftKey);
-                    break;
-                case SVGCanvas.tools.ellipse:
-                        this.current_draw.draw(x, y, this.shiftKey);
-                    break;
-                    case SVGCanvas.tools.triangle:
-                            this.current_draw.draw(x, y, this.shiftKey);
-                        break;
-                default:
-                    break;
-            }
         }
     }
 
@@ -329,6 +329,9 @@ class SVGCanvas extends RemoteObject {
 
         this.data = [];
         this.last_action = -1;
+        this.actual_packet = 0;
+        this.processed_packet = 0;
+        this.packets = {}
     }
 
     undo() {
