@@ -20,28 +20,52 @@
                 </div>
             </div>
             
-            <div class="content">
-                <form>
-                    <select name="category">
+            <div class="content" style="flex-direction: column;">
+                <form action="/create_room" method="POST">
+                    <label>Categoria:</label><br>
+                    <select id="category" name="category">
                         {% for categoria in categorias %}
-                        <option value="category{{ categoria[0] }}">{{ categoria[1]|capitalize }}</option>
+                        <option value="{{ categoria }}">{{ categorias[categoria]|capitalize }}</option>
                         {% endfor %}
-                    </select>
-                    <label>asd</label>
-                    <input name="subcategory" type="checkbox"/>
+                    </select><br>
+                    <label>Subcategoria:</label><br>
+                    <select id="subcategory" name="subcategory">
                         {% for categoria in categorias %}
-                        <div class="category">
-                            <h1>{{ categoria[1]|capitalize }}</h1>
-                            
-                            {% for subcategoria in subcategorias %}
-                            {% if categoria[0] == subcategoria[0] %}
-                            <button class="subcategory" type="button"><a href="#">{{ subcategoria[1] }}</a></button>
-                            {% endif %}
+                            {% for subcategoria in subcategorias[categoria] %}
+                                <option id="{{ categoria }}" value="{{ subcategoria }}" style="display: none;">{{ subcategorias[categoria][subcategoria] }}</option>
                             {% endfor %}
-                            
-                        </div>
                         {% endfor %}
+
+                    </select>
+                    <button type="submit">Criar</button>
                 </form>
+
+                <script type="text/javascript">
+                    function atualizarSubcategorias() {
+                        selection = document.querySelector("#category").value;
+                        var first = true;
+
+                        document.querySelector("#subcategory").childNodes.forEach((subcategory, key) => {
+                            if(subcategory.style) {
+                                if ( selection == subcategory.id ) {
+                                    subcategory.style.display = 'block';
+
+                                    if(first) {
+                                        first = false;
+                                        subcategory.selected = true; 
+                                    }
+                                }
+                                else
+                                    subcategory.style.display = 'none';
+                            }
+                        });
+ 
+                    }
+
+                    document.querySelector("#category").onchange =  () => {
+                        atualizarSubcategorias();
+                    }
+                </script>
             </div>
         </div>
     </div>
@@ -65,7 +89,7 @@
                 </div>
                 
                 <div class="right">
-                    <button onclick="document.getElementById('modal').style.display='flex'">Criar sala</button>
+                    <button onclick="document.getElementById('modal').style.display='flex';atualizarSubcategorias()">Criar sala</button>
                     <a style="align-self: center;">Jogadores em sala: {{ total_online }}</a>
                 </div>
             </div>

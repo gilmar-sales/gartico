@@ -1,8 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from room import Room
 from database import DB
-from random import randint
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -23,7 +22,6 @@ for subcategoria in DB.getInstance().executeQuery("select id_categoria, id, nome
 
 @app.route('/')
 def index():
-
     existing_rooms = []
     total_online = 0
     
@@ -52,12 +50,27 @@ def room(room_id):
 
     room = rooms.get(room_id)
 
-    return render_template('room.html', room_id = room_id, players = room.getPlayers())
+    if(room):
+        return render_template('room.html', room_id = room_id, players = room.getPlayers())
+    else:
+        return "<h1>Error 404 - Not found</h1>"
+
 
 @app.route('/create_room', methods=['POST'])
 def create_room():
-    id = randint(0, 300)
-    return id
+    if(len(rooms) == 300):
+        return "Full"
+
+    id = 1
+    for i  in range(1,300):
+        id = i
+        if(not rooms.get(id)):
+            break
+
+    rooms.setdefault(id, Room(id, int(request.form['category']), int(request.form['subcategory'])))
+
+
+    return redirect("/room/"+str(id))
 
 @socketio.on('join')
 def on_join(data):
@@ -67,10 +80,8 @@ def on_join(data):
 
     print(username + ' has entered the room: ' + data['room'])
 
-    #update server rooms
-    if not room:
-        rooms.setdefault(int(data['room']), Room(int(data['room'])))
-        room = rooms.get(int(data['room']))
+    #add player and send current drawing
+    room = rooms.get(int(data['room']))
 
     room.addPlayer(request.sid, {'username': username, 'points': 0})
     room.sendDraw(socketio, request.sid)
@@ -95,7 +106,6 @@ def on_leave(data):
 
     if  rooms.get(room).removePlayer(request.sid):
         rooms.pop(room)
-        
 
 # response to remote object call
 @socketio.on("request invoke")
