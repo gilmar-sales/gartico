@@ -1,15 +1,25 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from room import Room
 from database import DB
+from functools import wraps
 
-#login
-#from pythonlogin import main
 
 app = Flask(__name__)
 
 #Secret Key
 app.secret_key = "ferias"
+
+# login required decorator
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('You need to login first.')
+            return redirect(url_for('login'))
+    return wrap
 
 socketio = SocketIO(app)
 
@@ -17,8 +27,7 @@ rooms = {}
 categorias = {}
 subcategorias = {}
 login = {}
-#login
-#pythonlogin = {}
+
 
 for categoria in DB.getInstance().executeQuery("select id, nome from categorias"):
     categorias.setdefault(categoria[0], str(categoria[1]).capitalize())
@@ -135,6 +144,7 @@ def invoke(data):
 
 #login
 @app.route('/login', methods=['GET', 'POST'])
+@login_required
 def login():
     error = None
     if request.method == 'POST':
@@ -142,14 +152,18 @@ def login():
             error = 'Usuario ou senha nao estao corretos'
         else:
             session['logged_in'] = True
+            #redirect for page game
+            flash('Jogo acessado com sucesso!')
             return redirect(url_for('index'))
     return render_template('login.html', error=error)
 
 #logout
 @app.route('/logout')
+@login_required
 def logout():
     session.pop('logged_in', None)
     #Fazer tela de logout
+    flash('Voce deslogo do jogo!')
     return redirect(url_for('index'))
 
 #Debug
