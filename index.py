@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from room import Room
 from database import DB
@@ -7,6 +7,10 @@ from database import DB
 #from pythonlogin import main
 
 app = Flask(__name__)
+
+#Secret Key
+app.secret_key = "ferias"
+
 socketio = SocketIO(app)
 
 rooms = {}
@@ -137,5 +141,17 @@ def login():
         if request.form['username'] != 'admin' or request.form['password'] != 'admin':
             error = 'Usuario ou senha nao estao corretos'
         else:
-            return redirect(url_for('home'))
+            session['logged_in'] = True
+            return redirect(url_for('index'))
     return render_template('login.html', error=error)
+
+#logout
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    #Fazer tela de logout
+    return redirect(url_for('index'))
+
+#Debug
+if __name__ == '__main__':
+    app.run(debug=True)
