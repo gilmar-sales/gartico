@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from room import Room
 from database import DB
+
+#login
+#from pythonlogin import main
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -9,6 +12,9 @@ socketio = SocketIO(app)
 rooms = {}
 categorias = {}
 subcategorias = {}
+login = {}
+#login
+#pythonlogin = {}
 
 for categoria in DB.getInstance().executeQuery("select id, nome from categorias"):
     categorias.setdefault(categoria[0], str(categoria[1]).capitalize())
@@ -16,7 +22,7 @@ for categoria in DB.getInstance().executeQuery("select id, nome from categorias"
 for subcategoria in DB.getInstance().executeQuery("select id_categoria, id, nome from subcategorias"):
     if not subcategorias.get(subcategoria[0]):
         subcategorias.setdefault(subcategoria[0], {})
-    
+
     subcategorias.get(subcategoria[0]).setdefault(subcategoria[1], str(subcategoria[2]).capitalize())
 
 
@@ -24,7 +30,7 @@ for subcategoria in DB.getInstance().executeQuery("select id_categoria, id, nome
 def index():
     existing_rooms = []
     total_online = 0
-    
+
     for room_id in rooms:
         room = rooms[room_id]
 
@@ -115,10 +121,21 @@ def on_leave(data):
 @socketio.on("request invoke")
 def invoke(data):
     room = int(data['room'])
-    
+
     if(not room):
         return
 
     rooms.get(room).addCommand(data)
     print(data)
     emit("invoke method", data, include_self=False, room = room)
+
+#login
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
+            error = 'Usuario ou senha nao estao corretos'
+        else:
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)

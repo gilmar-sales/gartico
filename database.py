@@ -1,12 +1,13 @@
 from mysql import connector
 
+
 # Singleton database class
 class DB:
     __instance = None
     __db = None
     __cursor  = None
 
-    @staticmethod 
+    @staticmethod
     def getInstance():
         if DB.__instance == None:
             DB()
@@ -26,7 +27,7 @@ class DB:
             DB.__db = connector.connect(
                 host='127.0.0.1',
                 user='root',
-                password='123456',
+                password='Paulo123',
                 database='projeto_pp'
             )
 
