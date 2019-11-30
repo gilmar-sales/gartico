@@ -1,12 +1,14 @@
 class Room extends RemoteObject {
 
-    constructor(protocol, domain, port, room) {
+    constructor(svg, protocol, domain, port, room) {
         super(protocol, domain, port, room);
 
-        this.players = [];
         this.observer = true;
+        this.canvas = new SVGCanvas(svg);
     }
 
-    
+    callCanvas(method, ...params) {
+            return this.canvas[method](...params);
+    }
     
 }

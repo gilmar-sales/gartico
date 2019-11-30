@@ -3,6 +3,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/rmi.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/draw.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/room.js') }}"></script>
 
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v4.min.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/room.css') }}">
@@ -116,9 +117,8 @@
 </div>
 
 <script type="text/javascript">
-    
-    const remote = new SVGCanvas('#svg', location.protocol, document.domain, location.port, location.pathname.split('/')[2]);
-    console.log(remote);
+    const room = new Room('#svg', location.protocol, document.domain, location.port, location.pathname.split('/')[2])
+    //const remote = new SVGCanvas('#svg', location.protocol, document.domain, location.port, location.pathname.split('/')[2]);
     const pickr = Pickr.create({
         el: '.color-picker',
         theme: 'nano', // or 'monolith', or 'nano',
@@ -155,40 +155,40 @@
 
     pickr.on('init', instance => {
     }).on('save', (color, instance) => {
-        remote.setColor(color.toHEXA().toString());
+        room.callCanvas('setColor', color.toHEXA().toString());
     });
     
     
     function down() {
         const coords = d3.mouse(this);
         
-        remote.startDraw(coords[0], coords[1]);
+        room.callCanvas('startDraw', coords[0], coords[1]);
     }
 
     function up() {
-        remote.setDrawing(false);
+        room.callCanvas('setDrawing', false);
     }
 
     function move() {
-        if (!remote.drawing)
+        if (!room.canvas.drawing)
             return;
             
         const coords = d3.mouse(this);
 
-        remote.draw(coords[0], coords[1]);
+        room.callCanvas('draw', coords[0], coords[1]);
     }
 
-    remote.svg.on('mousedown', down); 
-    remote.svg.on('touchstart', down); 
+    room.canvas.svg.on('mousedown', down); 
+     room.canvas.svg.on('touchstart', down); 
 
     document.onmouseup = up;
     document.ontouchend = up;
 
-    remote.svg.on('mousemove', move);
-    remote.svg.on('touchmove', move);
+     room.canvas.svg.on('mousemove', move);
+     room.canvas.svg.on('touchmove', move);
 
     document.onkeydown = (ev) => {
-        remote.shiftKey = ev.shiftKey;
+        room.canvas.shiftKey = ev.shiftKey;
         if(ev.ctrlKey && ev.key == "Z") {
             document.querySelector('#redo').onclick();
         }
@@ -197,44 +197,44 @@
         }
 
         if(ev.ctrlKey && ev.key == "i") {
-                remote.observer = !remote.observer;
-                alert("obserser:"+ remote.observer);
+            room.canvas.observer = !room.canvas.observer;
+            alert("obserser:"+ room.canvas.observer);
         }
     }
 
     document.onkeyup = (ev) => {
-        remote.shiftKey = ev.shiftKey;
+        room.canvas.shiftKey = ev.shiftKey;
     }
     
     document.querySelector('#pen').onclick = () => {
-        remote.setTool('pen');
+        room.canvas.setTool('pen');
     }
 
     document.querySelector('#rectangle').onclick = () => {
-        remote.setTool('rectangle');
+        room.canvas.setTool('rectangle');
     }
     
     document.querySelector('#ellipse').onclick = () => {
-        remote.setTool('ellipse');
+        room.canvas.setTool('ellipse');
     }
     
     document.querySelector('#triangle').onclick = () => {
-        remote.setTool('triangle');
+        room.canvas.setTool('triangle');
     }
 
     document.querySelector('#eraser').onclick = () => {
-        remote.setTool('eraser');
+        room.callCanvas('setTool', 'eraser');
     }
 
     document.querySelector('#clear').onclick = () => {
-        remote.clear();
+        room.callCanvas('clear');
     }
 
     document.querySelector('#undo').onclick = () => {
-        remote.undo();
+        room.callCanvas('undo');
     }
     document.querySelector('#redo').onclick = () => {
-        remote.redo();
+        room.callCanvas('redo');
     }
 </script>
 

@@ -24,19 +24,19 @@ class Rectangle {
                 .attr('height', Math.abs( x - this.data.attr("x")))
             } else {
                 
-                if(x - this.x < 0) {
-                    this.data 
-                    .attr('x', this.x - (this.x - x));
-                }
-
-                if(y - this.y < 0) {
-                    this.data 
-                    .attr('y', this.y - (this.y - y));
-                }
-                
                 this.data 
                     .attr('width', Math.abs( x - this.x)) 
                     .attr('height', Math.abs( y - this.y));
+            }
+            
+            if(x - this.x < 0) {
+                this.data 
+                .attr('x', this.x - (this.x - x));
+            }
+
+            if(y - this.y < 0) {
+                this.data 
+                .attr('y', this.y - (this.y - y));
             }
         }
     }
@@ -229,7 +229,7 @@ class Stroke {
     
 }
 
-class SVGCanvas extends RemoteObject {
+class SVGCanvas { // extends RemoteObject
 
     static tools = {
         pen: 1,
@@ -240,9 +240,7 @@ class SVGCanvas extends RemoteObject {
         triangle: 6
     }
 
-    constructor(svg, protocol, domain, port, room) {
-        super(protocol, domain, port, room);
-        
+    constructor(svg) {
         this.svg = d3.select(svg);
         this.tool = SVGCanvas.tools.pen;
 
@@ -256,8 +254,16 @@ class SVGCanvas extends RemoteObject {
         this.last_action = -1;
     }
 
+    getSVG() {
+        return this.svg;
+    }
+
     setTool(tool) {
         this.tool = SVGCanvas.tools[tool];
+    }
+
+    isDrawing() {
+        return this.drawing;
     }
 
     setDrawing(drawing) {
@@ -301,7 +307,7 @@ class SVGCanvas extends RemoteObject {
     }
     
     draw(x, y) {
-        switch (remote.tool) {
+        switch (this.tool) {
             case SVGCanvas.tools.pen :
                 this.current_draw.draw(x, y);
                 break;

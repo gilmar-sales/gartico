@@ -44,7 +44,8 @@ class Room:
         return self.playing
     
     def addCommand(self, command):
-        if(command['method'] == 'clear'):
+        print(command)
+        if(command['args'][0] == 'clear'):
             self.draw.clear()
             self.last_action = -1
         else:

@@ -13,7 +13,7 @@ class RemoteObject {
     constructor(protocol, domain, port, room) {
         this.socket = io.connect(protocol + '//' + domain + ':' + port);
         this.room = room;
-        this.listener = true;
+        this.listener = false;
 
         //tcp protocol
         this.packets = {};

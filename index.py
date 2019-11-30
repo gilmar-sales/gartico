@@ -76,12 +76,16 @@ def create_room():
 def on_join(data):
     username = data['username']
     room = rooms.get(int(data['room']))
-    join_room(int(data['room']))
 
     print(username + ' has entered the room: ' + data['room'])
 
     #add player and send current drawing
     room = rooms.get(int(data['room']))
+
+    if(not room):
+        return
+
+    join_room(int(data['room']))
 
     room.addPlayer(request.sid, {'username': username, 'points': 0})
     room.sendDraw(socketio, request.sid)
@@ -111,5 +115,10 @@ def on_leave(data):
 @socketio.on("request invoke")
 def invoke(data):
     room = int(data['room'])
+    
+    if(not room):
+        return
+
     rooms.get(room).addCommand(data)
+    print(data)
     emit("invoke method", data, include_self=False, room = room)
