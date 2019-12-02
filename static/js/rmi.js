@@ -25,10 +25,10 @@ class RemoteObject {
 
         //
         this.socket.on('connect', () => {
-            this.socket.emit('join', {username: 'gilmar', room: room});
+            this.socket.emit('join', {username: nickname, room: room});
             
             window.onbeforeunload = () => {
-                this.socket.emit('leave', {username: 'gilmar', room: room});
+                this.socket.emit('leave', {username: nickname, room: room});
             }
         });
 

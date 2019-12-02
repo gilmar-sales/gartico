@@ -29,7 +29,7 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #2f81f5;
+    background-color: #cb2020;
     color: white;
     cursor: pointer;
     border-style: none;
@@ -38,7 +38,7 @@ button {
 }
 
 button:hover {
-    background-color: #5298fa;
+    background-color: #fa4a4a;
 }
 
 button a {
