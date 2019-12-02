@@ -26,7 +26,6 @@ socketio = SocketIO(app)
 rooms = {}
 categorias = {}
 subcategorias = {}
-login = {}
 
 
 for categoria in DB.getInstance().executeQuery("select id, nome from categorias"):
@@ -64,18 +63,21 @@ def index():
 
     return render_template('index.html', total_online=total_online, categorias=categorias, subcategorias=subcategorias, existing_rooms=existing_rooms)
 
+
 @app.route('/room/<int:room_id>')
+@login_required
 def room(room_id):
 
     room = rooms.get(room_id)
 
     if(room):
-        return render_template('room.html', room_id = room_id, players = room.getPlayers())
+        return render_template('room.html', room_id = room_id, players = room.getPlayers(), nick=session['nickname'])
     else:
         return "<h1>Error 404 - Not found</h1>"
 
 
 @app.route('/create_room', methods=['POST'])
+@login_required
 def create_room():
     if(len(rooms) == 300):
         return "Full"
@@ -139,19 +141,24 @@ def invoke(data):
         return
 
     rooms.get(room).addCommand(data)
-    print(data)
     emit("invoke method", data, include_self=False, room = room)
 
 #login
 @app.route('/login', methods=['GET', 'POST'])
-@login_required
 def login():
     error = None
     if request.method == 'POST':
-        if request.form['username'] != 'admin' or request.form['password'] != 'admin':
-            error = 'Usuario ou senha nao estao corretos'
+        username = DB.getInstance().validateInput(request.form['username'])
+        password = DB.getInstance().validateInput(request.form['password'])
+
+        query = "select `id`, `nickname` from `usuarios` where `login` = '{}' and `senha` = MD5('{}')".format(username, password)
+        results = DB.getInstance().executeQuery(query)
+        
+        if not len(results):
+            error = 'Usuário ou senha incorretos'
         else:
             session['logged_in'] = True
+            session['nickname'] = results[0][1]
             #redirect for page game
             flash('Jogo acessado com sucesso!')
             return redirect(url_for('index'))
@@ -162,9 +169,45 @@ def login():
 @login_required
 def logout():
     session.pop('logged_in', None)
-    #Fazer tela de logout
-    flash('Voce deslogo do jogo!')
+    session.pop('nickname', None)
+    
     return redirect(url_for('index'))
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    error = None
+    success = None
+
+    if request.method == "POST":
+        login = DB.getInstance().validateInput(request.form['username'])
+        password = DB.getInstance().validateInput(request.form['password'])
+        nick = DB.getInstance().validateInput(request.form['nickname'])
+
+        check_login_query = "select `id` from `usuarios` where `login` = '{}'".format(login)
+        check_nick_query = "select `id` from `usuarios` where `nickname` = '{}'".format(nick)
+        if not nick:
+            error = "Apelido inválido"
+        elif len(nick) < 5:
+            error = "O apelido deve conter pelo menos 5 caracteres"
+        if not login:
+            error = "Login inválido"
+        elif len(login) < 5:
+            error = "O login deve conter pelo menos 5 caracteres"
+        elif not password:
+            error = "Senha inválida"
+        elif len(password) < 8:
+            error = "A senha deve conter pelo menos 8 caracteres"
+        elif len(DB.getInstance().executeQuery(check_login_query)):
+            error = "Nome de usuário indisponível"
+        elif len(DB.getInstance().executeQuery(check_nick_query)):
+            error = "Apelido indisponível"
+        else:
+            query = "insert into `usuarios` (`login`, `senha`, `nickname`) values('{}', MD5('{}'), '{}')".format(login, password, nick)
+            DB.getInstance().executeQuery(query)
+            DB.getInstance().apply()
+            success = True
+
+    return render_template('register.html', error=error, success=success)
 
 #Debug
 if __name__ == '__main__':
