@@ -9,7 +9,7 @@
 {% block body %}
 <body>
     <div id="modal" class="modal">
-        <div class="create_room">
+        <div id="create_room" class="create_room">
             <div class="title">
                 <div class="left">
                     Criar sala
@@ -74,9 +74,18 @@
             <a class="home">Gartico</a>
         </div>
         <div class="right">
-            <button class="tool-btn"><a class="home">Login</a></button>
-            <button><a class="home">Cadastro</a></button>
+            {% if session.logged_in %}
+            <button class="tool-btn" onclick="window.location.href = '/logout'">Sair</button>
             <button><a class="home">Sobre</a></button>
+            <div style="display: flex; flex-direction: column; align-content: center; align-items: center;">
+                <img class="profile" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
+                <small>{{session.nickname}}</small>
+            </div>
+            {% else %}
+            <button class="tool-btn" onclick="window.location.href = '/login'" >Login</button>
+            <button onclick="window.location.href = '/register'">Cadastro</button>
+            <button><a class="home">Sobre</a></button>
+            {% endif %}
             
         </div>
     </nav>
@@ -89,7 +98,9 @@
                 </div>
                 
                 <div class="right">
+                    {% if session.logged_in %}
                     <button onclick="document.getElementById('modal').style.display='flex';atualizarSubcategorias()">Criar sala</button>
+                    {% endif %}
                     <a style="align-self: center;">Jogadores em sala: {{ total_online }}</a>
                 </div>
             </div>
