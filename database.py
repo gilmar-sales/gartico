@@ -15,8 +15,22 @@ class DB:
 
     def executeQuery(self, query):
         DB.__cursor.execute(query)
-        results = DB.__cursor.fetchall()
-        return results
+        try:
+            results = DB.__cursor.fetchall()
+            return results
+        except Exception as e:
+            print(e)
+            return
+    
+    def apply(self):
+        DB.__db.commit()
+
+    def validateInput(self, input):
+        for char in input:
+            if char == '`' or char == '\'' or char == '\"':
+                return None
+        
+        return input
 
     def __init__(self):
         if DB.__instance != None:
@@ -27,7 +41,7 @@ class DB:
             DB.__db = connector.connect(
                 host='127.0.0.1',
                 user='root',
-                password='Paulo123',
+                password='123456',
                 database='projeto_pp'
             )
 
