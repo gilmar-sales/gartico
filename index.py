@@ -71,7 +71,7 @@ def room(room_id):
     room = rooms.get(room_id)
 
     if(room):
-        return render_template('room.html', room_id = room_id, players = room.getPlayers(), nick=session['nickname'])
+        return render_template('room.html', room_id = room_id, players = room.getPlayers())
     else:
         return "<h1>Error 404 - Not found</h1>"
 
@@ -95,7 +95,7 @@ def create_room():
 
 @socketio.on('join')
 def on_join(data):
-    username = data['username']
+    username = session['nickname']
     room = rooms.get(int(data['room']))
 
     print(username + ' has entered the room: ' + data['room'])
@@ -121,14 +121,13 @@ def on_join(data):
 
 @socketio.on('leave')
 def on_leave(data):
-    username = data['username']
+    username = session['nickname']
     room = int(data['room'])
     leave_room(room)
 
     print(username + ' has left the room: ' + str(room))
 
     #update server rooms
-
     if  rooms.get(room).removePlayer(request.sid):
         rooms.pop(room)
 
