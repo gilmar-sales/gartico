@@ -1,29 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from room import Room
+from room import room_list, Room
 from database import DB
-from functools import wraps
-
+from account_controller import AccountController
 
 app = Flask(__name__)
 
 #Secret Key
 app.secret_key = "ferias"
 
-# login required decorator
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('You need to login first.')
-            return redirect(url_for('login'))
-    return wrap
-
 socketio = SocketIO(app)
+acc = AccountController(socketio)
 
-rooms = {}
 categorias = {}
 subcategorias = {}
 
@@ -43,8 +31,8 @@ def index():
     existing_rooms = []
     total_online = 0
 
-    for room_id in rooms:
-        room = rooms[room_id]
+    for room_id in room_list:
+        room = room_list[room_id]
 
         categoria = categorias.get(room.getCategory())
         subcategoria = subcategorias.get(room.getCategory())
@@ -65,82 +53,91 @@ def index():
 
 
 @app.route('/room/<int:room_id>')
-@login_required
+@acc.login_required
 def room(room_id):
 
-    room = rooms.get(room_id)
+    room = room_list.get(room_id)
 
     if(room):
-        return render_template('room.html', room_id = room_id, players = room.getPlayers())
+        if room.getPlayerByNick(session['nickname']):
+            return redirect(url_for('index'))
+        else:
+            return render_template('room.html', room_id = room_id, players = room.getPlayers())
     else:
-        return "<h1>Error 404 - Not found</h1>"
+        return redirect(url_for('index'))
 
 
 @app.route('/create_room', methods=['POST'])
-@login_required
+@acc.login_required
 def create_room():
-    if(len(rooms) == 300):
+    if(len(room_list) == 300):
         return "Full"
 
     id = 1
     for i  in range(1,300):
         id = i
-        if(not rooms.get(id)):
+        if(not room_list.get(id)):
             break
 
-    rooms.setdefault(id, Room(id, int(request.form['category']), int(request.form['subcategory'])))
-
+    room_list.setdefault(id, Room(socketio, id, int(request.form['category']), int(request.form['subcategory'])))
 
     return redirect("/room/"+str(id))
 
 @socketio.on('join')
 def on_join(data):
     username = session['nickname']
-    room = rooms.get(int(data['room']))
-
-    print(username + ' has entered the room: ' + data['room'])
-
-    #add player and send current drawing
-    room = rooms.get(int(data['room']))
-
-    if(not room):
-        return
-
     join_room(int(data['room']))
 
-    room.addPlayer(request.sid, {'username': username, 'points': 0})
-    room.sendDraw(socketio, request.sid)
+    room = room_list.get(int(data['room']))
+    if room:
+        #add player and send current drawing
+        print(username + ' has entered the ' + data['room'])
 
-    #start game with 2 or more players
-    if(not room.isPlaying()):
-        if(room.getPlayersCount() > 1):
-            print("game start")
-        else:
-            print("waiting for players")
+        room.addPlayer(request.sid, {'username': username, 'points': 0})
+        room.sendDraw(request.sid)
 
+        #start game with 2 or more players
+        if(room.getPlayersCount() > 1 and not room.isPlaying()):
+            room.start()
+
+@socketio.on('disconnect')
+def disconnect():
+    print(request.event)
+    print(request.sid + " disconnected")
 
 @socketio.on('leave')
 def on_leave(data):
     username = session['nickname']
-    room = int(data['room'])
-    leave_room(room)
+    room = room_list.get(int(data['room']))
 
-    print(username + ' has left the room: ' + str(room))
+    leave_room(data['room'])
 
-    #update server rooms
-    if  rooms.get(room).removePlayer(request.sid):
-        rooms.pop(room)
+    #update server room_list
+    if room:
+        room.removePlayer(request.sid)
+        if(room.getPlayersCount() == 1):
+            room.stop()
+        print(username + ' has left the room: ' + data['room'])
 
 # response to remote object call
 @socketio.on("request invoke")
 def invoke(data):
-    room = int(data['room'])
+    room = room_list.get(int(data['room']))
 
-    if(not room):
-        return
+    print(data)
+    if(room):
+        if data['packet']:
+            room.addCommand(data)    
 
-    rooms.get(room).addCommand(data)
-    emit("invoke method", data, include_self=False, room = room)
+    print(data)
+    emit("invoke method", data, include_self=False, room = int(data['room']))
+
+@socketio.on("sendAnswer")
+def answer(data):
+    room = room_list.get(int(data['room']))
+
+    if(room):
+        room.validateAnswer(data['answer'].encode('latin-1').decode('utf-8'))
 
 #login
 @app.route('/login', methods=['GET', 'POST'])
@@ -165,7 +162,7 @@ def login():
 
 #logout
 @app.route('/logout')
-@login_required
+@acc.login_required
 def logout():
     session.pop('logged_in', None)
     session.pop('nickname', None)
