@@ -20,10 +20,9 @@
 
             <img class="logo" src="{{ url_for('static', filename='img/logo.svg') }}">
 
-            <ul>
+            <ul id="players">
                 {% for player in players %}
-
-                <li class="row">
+                <li id="{{ player }}" class="row">
                         <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
                         <div class="col">
                             <a class="user-name">{{ player }}</a>
@@ -31,28 +30,6 @@
                         </div>
                     </li>
                 {% endfor %}
-
-                <li class="row">
-                    <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
-                    <div class="col">
-                        <a class="user-name">Gilso</a>
-                        <a class="user-rank">20pts</a>
-                    </div>
-                </li>
-                <li class="row">
-                    <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
-                    <div class="col">
-                        <a class="user-name">Maygon</a>
-                        <a class="user-rank">20pts</a>
-                    </div>
-                </li>
-                <li class="row">
-                    <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
-                    <div class="col">
-                        <a class="user-name">Moreno</a>
-                        <a class="user-rank">20pts</a>
-                    </div>
-                </li>
             </ul>
         </div>
 
@@ -62,18 +39,27 @@
             </div>
             <div class="row bottom-center-pannel">
                 <div class="answers">
-
+                    <div class="answers-title">Respostas</div>
+                    <div id="answers-area" class="answers-area" readonly="True"></div>
+                        <div class="row">
+                            <input id="answer" name="answer" type="text">
+                            <input type="submit" value="enviar">
+                        </div>
                 </div>
 
                 <div class="chat">
-                    
+                    <div class="chat-title">Chat</div>
+                        <textarea class="message-area" readonly="True"></textarea>
+                        <div class="row">
+                            <input name="message" type="text">
+                            <input type="submit" value="enviar">
+                        </div>
                 </div>
             </div>
         </div>
             
         <div class="col side-panel no-selectable">
             <div class="tool-panel">
-
                     <button class="tool-btn" id="pen">
                         <img class="tool-icon" src="{{ url_for('static', filename='img/pencil.svg') }}">
                         <span class="tooltip">Pencil</span>    
@@ -111,6 +97,12 @@
                         <div class="color-picker"></div>
                         <span class="tooltip">Color</span>    
                     </div>
+            </div>
+
+            <h3 id="tips" style="text-align: center;">Aguardando jogadores</h3>
+            <div class="row" style="align-content: center;">
+                <h3>Tempo:</h3>
+                <h3 id="countdown"></3>
             </div>
         </div>
     </div>
@@ -179,13 +171,24 @@
     }
 
     room.canvas.svg.on('mousedown', down); 
-     room.canvas.svg.on('touchstart', down); 
+    room.canvas.svg.on('touchstart', down); 
 
     document.onmouseup = up;
     document.ontouchend = up;
 
-     room.canvas.svg.on('mousemove', move);
-     room.canvas.svg.on('touchmove', move);
+    room.canvas.svg.on('mousemove', move);
+    room.canvas.svg.on('touchmove', move);
+
+    function sendAnswer(answer) {
+        room.socket.emit('sendAnswer', {room: room.room, answer: answer})
+    }     
+
+    document.getElementById("answer").onkeydown = (ev) => {
+        if(ev.key == "Enter")  {
+            sendAnswer(document.getElementById("answer").value);
+            document.getElementById("answer").value = ""
+       }
+    }
 
     document.onkeydown = (ev) => {
         room.canvas.shiftKey = ev.shiftKey;
@@ -207,23 +210,23 @@
     }
     
     document.querySelector('#pen').onclick = () => {
-        room.canvas.setTool('pen');
+        room.callCanvas('setTool', 'pen');
     }
 
     document.querySelector('#rectangle').onclick = () => {
-        room.canvas.setTool('rectangle');
+        room.callCanvas('setTool', 'rectangle');
     }
     
     document.querySelector('#ellipse').onclick = () => {
-        room.canvas.setTool('ellipse');
+        room.callCanvas('setTool', 'ellipse');
     }
     
     document.querySelector('#triangle').onclick = () => {
-        room.canvas.setTool('triangle');
+        room.callCanvas('setTool', 'triangle');
     }
 
     document.querySelector('#eraser').onclick = () => {
-        room.callCanvas('setTool', 'eraser');
+        room.callCanvas('setTool', 'ertriangleaser');
     }
 
     document.querySelector('#clear').onclick = () => {
@@ -236,6 +239,16 @@
     document.querySelector('#redo').onclick = () => {
         room.callCanvas('redo');
     }
+
+    
+    setInterval(function(){
+        if(room.countDown > 0){
+            room.countDown -= 1
+            document.getElementById("countdown").innerHTML = room.countDown+'s'
+        }
+
+    }, 1000);
+
 </script>
 
 {% endblock %}
