@@ -229,20 +229,19 @@ class Stroke {
     
 }
 
+const tools = {
+    pen: 1,
+    pencil: 2,
+    eraser: 3,
+    rectangle: 4,
+    ellipse: 5,
+    triangle: 6
+}
+
 class SVGCanvas { // extends RemoteObject
-
-    static tools = {
-        pen: 1,
-        pencil: 2,
-        eraser: 3,
-        rectangle: 4,
-        ellipse: 5,
-        triangle: 6
-    }
-
     constructor(svg) {
         this.svg = d3.select(svg);
-        this.tool = SVGCanvas.tools.pen;
+        this.tool = tools.pen;
 
         this.drawing = false;
         this.shiftKey = false;
@@ -259,7 +258,7 @@ class SVGCanvas { // extends RemoteObject
     }
 
     setTool(tool) {
-        this.tool = SVGCanvas.tools[tool];
+        this.tool = tools[tool];
     }
 
     isDrawing() {
@@ -281,19 +280,19 @@ class SVGCanvas { // extends RemoteObject
         }
 
         switch (this.tool) {
-            case SVGCanvas.tools.pen:
+            case tools.pen:
                 this.current_draw = new Stroke(this.svg, 5, this.color);
                 this.current_draw.draw(x, y);
             break;
-            case SVGCanvas.tools.rectangle:
+            case tools.rectangle:
                 this.current_draw = new Rectangle(this.svg, 5, this.color);
                 this.current_draw.draw(x,y);
             break;
-            case SVGCanvas.tools.ellipse:
+            case tools.ellipse:
                 this.current_draw = new Ellipse(this.svg, 5, this.color);
                 this.current_draw.draw(x,y);
             break;
-            case SVGCanvas.tools.triangle:
+            case tools.triangle:
                 this.current_draw = new Triangle(this.svg, 5, this.color);
                 this.current_draw.draw(x,y);
             break;
@@ -308,21 +307,21 @@ class SVGCanvas { // extends RemoteObject
     
     draw(x, y) {
         switch (this.tool) {
-            case SVGCanvas.tools.pen :
+            case tools.pen :
                 this.current_draw.draw(x, y);
                 break;
-            case SVGCanvas.tools.eraser :
+            case tools.eraser :
                 this.current_draw.draw(x, y);
                 break;
-            case SVGCanvas.tools.rectangle:
+            case tools.rectangle:
                     this.current_draw.draw(x, y, this.shiftKey);
                 break;
-            case SVGCanvas.tools.ellipse:
+            case tools.ellipse:
                     this.current_draw.draw(x, y, this.shiftKey);
                 break;
-                case SVGCanvas.tools.triangle:
-                        this.current_draw.draw(x, y, this.shiftKey);
-                    break;
+            case tools.triangle:
+                    this.current_draw.draw(x, y, this.shiftKey);
+                break;
             default:
                 break;
         }
@@ -335,9 +334,6 @@ class SVGCanvas { // extends RemoteObject
 
         this.data = [];
         this.last_action = -1;
-        this.actual_packet = 0;
-        this.processed_packet = 0;
-        this.packets = {}
     }
 
     undo() {
