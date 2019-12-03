@@ -191,7 +191,7 @@
     }
 
     document.onkeydown = (ev) => {
-        room.canvas.shiftKey = ev.shiftKey;
+        room.callCanvas('setShiftKey', ev.shiftKey);
         if(ev.ctrlKey && ev.key == "Z") {
             document.querySelector('#redo').onclick();
         }
@@ -206,7 +206,7 @@
     }
 
     document.onkeyup = (ev) => {
-        room.canvas.shiftKey = ev.shiftKey;
+        room.callCanvas('setShiftKey', ev.shiftKey);
     }
     
     document.querySelector('#pen').onclick = () => {

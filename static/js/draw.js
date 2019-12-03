@@ -261,6 +261,10 @@ class SVGCanvas { // extends RemoteObject
         this.tool = tools[tool];
     }
 
+    setShiftKey(value) {
+        this.shiftKey = value;
+    }
+
     isDrawing() {
         return this.drawing;
     }

@@ -128,7 +128,6 @@ def invoke(data):
         if data['packet']:
             room.addCommand(data)    
 
-    print(data)
     emit("invoke method", data, include_self=False, room = int(data['room']))
 
 @socketio.on("sendAnswer")
