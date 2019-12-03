@@ -124,7 +124,6 @@ def on_leave(data):
 def invoke(data):
     room = room_list.get(int(data['room']))
 
-    print(data)
     if(room):
         if data['packet']:
             room.addCommand(data)    
