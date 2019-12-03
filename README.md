@@ -7,6 +7,7 @@ Using Python 3.8
 ```
     pip install -U flask
     pip install -U flask_socketio
+    pip install -U mysql-connector
 ```
 
 ## Windows init
