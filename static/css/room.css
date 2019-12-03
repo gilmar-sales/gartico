@@ -3,9 +3,9 @@
     width: 1200px;
     display: flex;
     flex-direction: row;
-    background-color: #036bfc;
+    background-color: #cb2020;
     border-radius: 30px;
-    border: 2px #003a8a solid;
+    border: 2px #990101 solid;
 }
 
 .col {
@@ -33,9 +33,10 @@
 }
 
 .users-panel {
-    max-height: 90%;
+    width: 200px;
     margin: 0;
     flex-grow: 1;
+    overflow-y: auto;
 }
 
 .users-panel ul {
@@ -86,13 +87,43 @@
 }
 
 .answers {
+    width: 350px;
     flex-grow: 1;
-    background-color: #105cc7;
+    background-color: #c21a1a;
+}
+.answers-title {
+    height: 30px;
+    color: white;
+    text-align: center;
+    background-color: #990101;
+}
+
+.answers-area {
+    width: 375px;
+    height: 150px;
+    background-color: white;
+    resize: none;
+    overflow: scroll;
+    scroll-behavior: auto;
 }
 
 .chat {
+    width: 350px;
     flex-grow: 1;
-    background-color: #044bb0;
+    background-color: #990101;
+}
+
+.chat-title {
+    height: 30px;
+    color: white;
+    text-align: center;
+    background-color: #c21a1a;
+}
+
+.message-area {
+    width: 375px;
+    height: 150px;
+    resize: none;
 }
 
 .side-panel {
@@ -101,7 +132,7 @@
 }
 
 .tool-panel {
-    background-color: #105cc7;
+    background-color: #990101;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -116,20 +147,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #2f81f5;
+    background-color: #cb2020;
     border-style: none;
     border-radius: 5px;
     margin: 5px;
 }
 
 .tool-btn:hover {
-    background-color: #5298fa;
+    background-color: #fa4a4a;
 }
 
 
 .tooltip {
     visibility: hidden;
-    background-color: #013987;
+    background-color: #610404;
     font-family: 'Type Grotesk';
     color: #fff;
     text-align: center;
@@ -155,7 +186,7 @@
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color:  transparent transparent #013987 transparent;
+    border-color:  transparent transparent #610404 transparent;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
