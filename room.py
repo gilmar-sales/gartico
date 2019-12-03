@@ -168,6 +168,7 @@ class Room:
     
     def stop(self):
         self.playing = False
+        self.nextRoundTimer.cancel()
         self.nextRoundTimer = threading.Timer(120.0, self.nextRound, [])
         print("stoping game room: {}".format(self.id))
         self.socketio.emit('invoke method', {'method': 'stop', 'args': []}, room = self.id)
