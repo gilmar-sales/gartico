@@ -1,5 +1,7 @@
 # Gartico
 
+A gartic clone made with flask + socketio
+
 ## Installing modules
 
 Using Python 3.8
