@@ -178,7 +178,7 @@ class Room:
         self.nextRoundTimer.start()
         
         for player in self.players:
-            if(player == self.currentDrawer):
+            if(player == self.players_sid[self.currentDrawer]):
                 self.socketio.emit('invoke method', {'method': 'setListener', 'args': [False]}, room = player)
                 self.socketio.emit('invoke method', {'method': 'setObject', 'args': [self.current_object]}, room = player)
             else:
