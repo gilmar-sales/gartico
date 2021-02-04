@@ -2,21 +2,32 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: var(--primary-color);
+}
+
+.game-title {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--secondary-color);
+  padding: 0.8rem 1rem;
+  grid-area: title;
+  border-bottom: 2px var(--primary-color) dashed;
 }
 
 .game {
+  overflow: hidden;
   display: grid;
-  grid-template-columns: [left] 1fr [mid] 2fr [right] 1fr;
   background-color: var(--primary-color);
-  border-radius: 30px;
-  border: 2px var(--secondary-color) solid;
-  width: 90%;
+  border-radius: 0.5rem;
+  border: 2px var(--secondary-color) dashed;
 }
 
 .room_logo {
   color: white;
   font-weight: 900;
-  font-size: 3rem;
+  font-size: 2rem;
   text-align: center;
 }
 
@@ -45,19 +56,18 @@
 }
 
 .users-panel {
-  width: 12rem;
+  width: 100%;
   margin: 0;
   flex-grow: 1;
   overflow-y: auto;
   grid-area: left;
+  border-right: 2px var(--secondary-color) dashed;
 }
 
 .users-panel ul {
   padding-inline-start: 0px;
   display: flex;
   flex-direction: column;
-  padding-left: 10px;
-  padding-right: 10px;
   background-color: transparent;
 }
 
@@ -66,7 +76,7 @@
 }
 
 .users-panel ul li {
-  border-bottom: 1px #cfcfcf solid;
+  border-bottom: 2px var(--secondary-color) dashed;
   padding: 10px;
 }
 
@@ -75,20 +85,22 @@
   width: 50px;
   border-radius: 50%;
   margin-right: 10px;
+  color: white;
 }
 
 .user-name {
-  font-size: 25px;
+  font-size: 1.2rem;
   color: #1b1b1b;
 }
 
 .user-rank {
-  font-size: 15px;
-  color: #3d3d3d;
+  font-size: 1rem;
+  color: #cacaca;
 }
 
 .center-panel {
   grid-area: mid;
+  border-right: 2px var(--secondary-color) dashed;
 }
 
 .canvas {
@@ -111,14 +123,18 @@
 }
 
 .message-title {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
-  text-align: center;
   background-color: var(--primary-color);
 }
 
 .message-area {
   width: 100%;
-  height: 100%;
+  height: 10rem;
   background-color: white;
   resize: none;
   overflow: auto;
@@ -207,13 +223,42 @@
   color: white;
 }
 
-@media screen and (max-width: 768px) {
+.input-icon {
+  color: var(--primary-color);
+  display: block;
+  left: 8px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+  z-index: 30;
+}
+.input-text {
+  width: 100%;
+  border: 1px var(--secondary-color) solid;
+  padding: 8px;
+  padding-left: 36px;
+}
+
+@media screen and (orientation: landscape) {
   .game {
-    max-width: 760px;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "title title title"
+      "left mid right";
   }
 }
-@media screen and (max-width: 1330px) {
+@media screen and (orientation: portrait) {
   .game {
-    width: 90%;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr 1fr 1fr;
+    grid-template-areas:
+      "title"
+      "left"
+      "mid"
+      "right";
   }
 }
