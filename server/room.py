@@ -36,38 +36,52 @@ class Room:
         self.currentDrawer = 0
         self.nextRoundTimer = threading.Timer(120.0, self.nextRound, [])
 
-        self.destroyTimer = threading.Timer(15.0, room_list.pop, [self.id])
+        self.destroyTimer = threading.Timer(15.0, self.close, [self])
         self.destroyTimerActive = False
 
     def getId(self):
         return self.id
 
+    def close(self):
+        print(f"Closing room: {self.id}")
+        room_list.pop(self.id)
+
     def validateAnswer(self, answer):
-        if  self.players_sid[self.currentDrawer] == request.sid:
+        status = "wrong"
+
+        if not self.current_object:
+            status = "wrong"
+        elif answer.lower() == self.current_object.lower():
+            status = "right"
+        elif self.current_object.find(answer) > -1:
+            status = "close"
+        elif self.current_object.lower().find(answer) > -1:
+            status = "close"
+        
+        return status
+
+    def sendAnswer(self, answer):
+        status = self.validateAnswer(answer)
+
+        if(request.sid == self.players_sid[self.currentDrawer] or self.playing == False):
             return
 
-        status = None
-        if not self.current_object:
-            status = -1
-        elif answer == self.current_object:
-            status = 1
-        elif self.current_object.find(answer) > -1:
-            status = 0
-        elif self.current_object.lower().find(answer) > -1:
-            status = 0
-        else:
-            status = -1
-        
-        if status == 1:
-            self.socketio.emit("invoke method", {'method': 'appendAnswer',  'args': [ self.getPlayerName(request.sid), 'acertou!', status]}, include_self=True, room = self.id)
+        if status == "right": 
+            self.socketio.emit("invoke method", {'method': 'appendAnswer',  'args': [ self.getPlayerName(request.sid), None, status]}, include_self=True, room = self.id)
             self.correctPlayers.setdefault(request.sid, True)
-
-            if len(self.correctPlayers) >= len(self.players_sid) - 1:
-                self.nextRound()
-        elif status == 0:
+        elif status == "close":
             self.socketio.emit("invoke method", {'method': 'appendAnswer',  'args': [ self.getPlayerName(request.sid), answer, status]}, include_self=True, room = request.sid)
         else:
             self.socketio.emit("invoke method", {'method': 'appendAnswer',  'args': [ self.getPlayerName(request.sid), answer, status]}, include_self=True, room = self.id)
+
+        if len(self.correctPlayers) >= len(self.players_sid) - 1:
+            self.nextRound()
+
+    def sendMessage(self, message):
+        status = self.validateAnswer(message)
+
+        if status == "wrong":
+            self.socketio.emit("invoke method", {'method': 'appendMessage',  'args': [ self.getPlayerName(request.sid), message, status]}, include_self=True, room = self.id)
 
     def getPlayerName(self, sid):
         return self.players.get(sid)['username']
@@ -98,11 +112,17 @@ class Room:
         self.destroyTimer.cancel()
         self.destroyTimer = threading.Timer(15.0, room_list.pop, [self.id])
     
-    def removePlayer(self, player):
-        if self.players.get(player):
-            self.socketio.emit('invoke method', {'method': 'removePlayer', 'args': [self.players.get(player)['username']]}, room = self.id)
-        self.players.pop(player)
-        self.players_sid.remove(player)
+    def removePlayer(self, sid):
+
+        player = self.players.get(sid)
+
+        if player:
+            self.socketio.emit('invoke method', {'method': 'removePlayer', 'args': [player['username']]}, room = self.id)
+        self.players_sid.remove(sid)
+        print(f'{player['username']} has left the room: {self.id}')
+
+        if(self.getPlayersCount() == 1):
+            self.stop()
         
         if not self.getPlayersCount() > 0:
             if not self.destroyTimerActive:
@@ -155,26 +175,28 @@ class Room:
         print("starting game room: {}".format(self.id))
         self.nextWord()
         self.nextRoundTimer.start()
-        for i in self.players_sid:
-            if(i == self.players_sid[self.currentDrawer]):
-                self.socketio.emit('invoke method', {'method': 'setListener', 'args': [False]}, room = i)
-                self.socketio.emit('invoke method', {'method': 'setObject', 'args': [self.current_object]}, room = i)
+        
+        for player in self.players:
+            if(player == self.currentDrawer):
+                self.socketio.emit('invoke method', {'method': 'setListener', 'args': [False]}, room = player)
+                self.socketio.emit('invoke method', {'method': 'setObject', 'args': [self.current_object]}, room = player)
             else:
-                self.socketio.emit('invoke method', {'method': 'setListener', 'args': [True]}, room = i)
-                self.sendCharCount(i)
+                self.socketio.emit('invoke method', {'method': 'setListener', 'args': [True]}, room = player)
+                self.sendCharCount(player)
                 
-            self.socketio.emit('invoke method', {'method': 'setCountDown', 'args': [120]}, room = i)
-            self.socketio.emit('invoke method', {'method': 'start', 'args': []}, room = i)
+        self.socketio.emit('invoke method', {'method': 'setCountDown', 'args': [120]}, room = self.id)
+        self.socketio.emit('invoke method', {'method': 'start', 'args': []}, room = self.id)
     
     def stop(self):
         self.playing = False
+        self.correctPlayers.clear()
         self.nextRoundTimer.cancel()
         self.nextRoundTimer = threading.Timer(120.0, self.nextRound, [])
         print("stoping game room: {}".format(self.id))
         self.socketio.emit('invoke method', {'method': 'stop', 'args': []}, room = self.id)
 
     def nextRound(self):
-        if(self.currentDrawer < len(self.players_sid) - 1):
+        if(self.currentDrawer < self.getPlayersCount() - 1):
             self.currentDrawer += 1
         else:
             self.currentDrawer =0

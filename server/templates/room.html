@@ -11,24 +11,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js"></script>
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0"/>
 {% endblock %}
     
 {% block body %}
 <div id="container" class="container">
     <div class="game">
-        <div class="users-panel col no-selectable">
-
+        <div class='game-title'>
             <h1 class="room_logo">Gartico</h1>
-
+            <a class="button" href="/"><i class="fas fa-sign-out-alt fa-lg"></i></a>
+        </div>
+        <div class="users-panel col no-selectable">
+            <i id="user-img" class="fas fa-user-circle fa-3x user-img" style="z-index: -1; position: fixed;"></i>
             <ul id="players">
                 {% for player in players %}
                 <li id="{{ player }}" class="row">
-                        <img class="user-img" src="{{ url_for('static', filename='img/icon-user-default.png') }}">
-                        <div class="col">
-                            <a class="user-name">{{ player }}</a>
-                            <a id="pts-{{ player }}" class="user-rank">0pts</a>
-                        </div>
-                    </li>
+                    <i class="fas fa-user-circle fa-3x user-img"></i>
+                    <div class="col">
+                        <a class="user-name">{{ player }}</a>
+                        <a id="pts-{{ player }}" class="user-rank">0pts</a>
+                    </div>
+                </li>
                 {% endfor %}
             </ul>
         </div>
@@ -41,18 +47,18 @@
                 <div class="message">
                     <div class="message-title">Respostas</div>
                     <div id="answers-area" class="message-area" readonly></div>
-                        <div class="row">
-                            <input id="answer" name="answer" type="text">
-                            <input type="submit" value="enviar">
+                        <div class="row" style="position: relative;">
+                            <i class="far fa-paper-plane fa-lg input-icon"></i>
+                            <input id="answer" class="input-text" type="text">
                         </div>
                 </div>
 
                 <div class="message">
                     <div class="message-title">Chat</div>
-                        <textarea class="message-area" ></textarea>
-                        <div class="row">
-                            <input name="message" type="text">
-                            <input type="submit" value="enviar">
+                        <div id="messages-area" class="message-area" readonly></div>
+                        <div class="row" style="position: relative;">
+                            <i class="far fa-comment-alt fa-lg input-icon"></i>
+                            <input id="message" class="input-text" type="text">
                         </div>
                 </div>
             </div>
@@ -180,13 +186,27 @@
     room.canvas.svg.on('touchmove', move);
 
     function sendAnswer(answer) {
+        if(answer.length)
         room.socket.emit('sendAnswer', {room: room.room, answer: answer})
     }     
 
+    function sendMessage(message) {
+        if(message.length)
+        room.socket.emit('sendMessage', {room: room.room, message: message})
+
+    }
+    
     document.getElementById("answer").onkeydown = (ev) => {
         if(ev.key == "Enter")  {
             sendAnswer(document.getElementById("answer").value);
             document.getElementById("answer").value = ""
+       }
+    }
+
+    document.getElementById("message").onkeydown = (ev) => {
+        if(ev.key == "Enter")  {
+            sendMessage(document.getElementById("message").value);
+            document.getElementById("message").value = ""
        }
     }
 
