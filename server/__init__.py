@@ -25,6 +25,7 @@ for subcategoria in DB.getInstance().executeQuery("select id_categoria, id, nome
 
     subcategorias.get(subcategoria[0]).setdefault(subcategoria[1], str(subcategoria[2]).capitalize())
 
+sid_list = {}
 
 @app.route('/')
 def index():
@@ -85,12 +86,18 @@ def create_room():
 
 @socketio.on('connect')
 def connect():
-    print(request.event)
     print(f"{session['nickname']} ({request.sid})  connected")
 
 @socketio.on('disconnect')
 def disconnect():
-    print(request.event)
+    sid_data = sid_list.get(request.sid)
+    room = room_list.get(int(sid_data['room']))
+
+    #update server room_list
+    if room:
+        room.removePlayer(request.sid)
+
+    sid_list.pop(request.sid)
     print(request.sid + " disconnected")
 
 @socketio.on('join')
@@ -101,7 +108,9 @@ def on_join(data):
     room = room_list.get(int(data['room']))
     if room:
         #add player and send current drawing
-        print(username + ' has entered the ' + data['room'])
+        print(username + ' has entered the room: ' + data['room'])
+
+        sid_list.setdefault(request.sid, {'username': username, 'room': data['room']})
 
         room.addPlayer(request.sid, {'username': username, 'points': 0})
         room.sendDraw(request.sid)
@@ -112,7 +121,6 @@ def on_join(data):
 
 @socketio.on('leave')
 def on_leave(data):
-    username = session['nickname']
     room = room_list.get(int(data['room']))
 
     leave_room(data['room'])
@@ -120,9 +128,6 @@ def on_leave(data):
     #update server room_list
     if room:
         room.removePlayer(request.sid)
-        if(room.getPlayersCount() == 1):
-            room.stop()
-        print(username + ' has left the room: ' + data['room'])
 
 # response to remote object call
 @socketio.on("request invoke")
@@ -135,11 +140,18 @@ def invoke(data):
     emit("invoke method", data, include_self=False, room = int(data['room']))
 
 @socketio.on("sendAnswer")
-def answer(data):
+def sendAnswer(data):
     room = room_list.get(int(data['room']))
 
     if(room):
-        room.validateAnswer(data['answer'].encode('latin-1').decode('utf-8'))
+        room.sendAnswer(data['answer'])
+
+@socketio.on("sendMessage")
+def sendMessage(data):
+    room = room_list.get(int(data['room']))
+
+    if(room):
+        room.sendMessage(data['message'])
 
 #login
 @app.route('/login', methods=['GET', 'POST'])
