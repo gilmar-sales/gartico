@@ -115,13 +115,14 @@ class Room:
     def removePlayer(self, sid):
 
         player = self.players.get(sid)
+        username = player['username']
 
         if player:
-            self.socketio.emit('invoke method', {'method': 'removePlayer', 'args': [player['username']]}, room = self.id)
+            self.socketio.emit('invoke method', {'method': 'removePlayer', 'args': [username]}, room = self.id)
         self.players_sid.remove(sid)
-        print(f'{player['username']} has left the room: {self.id}')
+        print(f'{username} has left the room: {self.id}')
 
-        if(self.getPlayersCount() == 1):
+        if(self.getPlayersCount() == 1): 
             self.stop()
         
         if not self.getPlayersCount() > 0:
