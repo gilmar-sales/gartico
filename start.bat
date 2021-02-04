@@ -1,2 +1,2 @@
-set FLASK_APP=index.py
-flask run
+set FLASK_APP=server
+python -m flask run

@@ -7,15 +7,13 @@ A gartic clone made with flask + socketio
 Using Python 3.8
 
 ```
-    pip install -U flask
-    pip install -U flask_socketio
-    pip install -U mysql-connector
+    pip install .
 ```
 
 ## Windows init
 
 ```
-set FLASK_APP=index.py
+set FLASK_APP=server
 
 flask run
 ```
@@ -23,7 +21,7 @@ flask run
 ## Linux/Mac init
 
 ```
-export FLASK_APP=index.py
+export FLASK_APP=server
 
 flask run
 ```

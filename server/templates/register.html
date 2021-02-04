@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block head %}
+<meta charset="utf8">
+<title>Cadastro - Gartico</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="static/bootstrap.min.css" rel="stylesheet" media="screen">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% if success %}
+<meta http-equiv="refresh" content="1;url={{ url_for('login') }}" />
+{% endif %}
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container">
+  <div class="login">
+    <div class="title">
+      <h1>Cadastro</h1>
+    </div>
+    <div class="content" style="display: flex; flex-direction: column;">
+      <form action="" method="post" style="display: flex; flex-direction: column;">
+        <label>Apelido</label>
+        <input type="text" placeholder="Apelido" name="nickname" value="{{ request.form.nickname }}">
+        <label>Login</label>
+        <input type="text" placeholder="Nome de usuário" name="username" value="{{ request.form.username }}">
+        <label>Senha</label>
+        <input type="password" placeholder="Senha" name="password" value="{{ request.form.password }}">
+        <br>
+        <button type="submit">Cadastrar</button>
+    
+      </form>
+
+      {% if success %}
+      <br>
+      <div class="success">
+        <p>Conta registrada com sucesso!</p>
+      </div>
+    {% endif %}
+
+      {% if error %}
+        <br>
+        <div class="error">
+          <p><strong>Error:</strong> {{ error }}</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  <br>
+</div>
+
+{% endblock %}

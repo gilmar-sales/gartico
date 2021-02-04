@@ -1,2 +1,2 @@
-export FLASK_APP=index.py
-flask run
+export FLASK_APP=server
+python -m flask run -h 0.0.0.0

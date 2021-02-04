@@ -1,3 +1,3 @@
-export FLASK_APP=index.py
+export FLASK_APP=server
 export FLASK_ENV=development
-flask run --no-reload
+python -m flask run --no-reload

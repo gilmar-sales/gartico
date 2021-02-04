@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from room import room_list, Room
-from database import DB
-from account_controller import AccountController
+from server.room import room_list, Room
+from server.database import DB
+from server.account_controller import AccountController
 
 app = Flask(__name__)
 
