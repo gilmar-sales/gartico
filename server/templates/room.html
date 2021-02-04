@@ -18,7 +18,7 @@
     <div class="game">
         <div class="users-panel col no-selectable">
 
-            <img class="logo" src="{{ url_for('static', filename='img/logo.svg') }}">
+            <h1 class="room_logo">Gartico</h1>
 
             <ul id="players">
                 {% for player in players %}
@@ -37,19 +37,19 @@
             <div class="row canvas">
                 <svg id="svg" viewBox="0 0 800 370" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width:100%; height:100%; touch-action:none;"></svg>
             </div>
-            <div class="row bottom-center-pannel">
-                <div class="answers">
-                    <div class="answers-title">Respostas</div>
-                    <div id="answers-area" class="answers-area" readonly="True"></div>
+            <div class="bottom-center-pannel">
+                <div class="message">
+                    <div class="message-title">Respostas</div>
+                    <div id="answers-area" class="message-area" readonly></div>
                         <div class="row">
                             <input id="answer" name="answer" type="text">
                             <input type="submit" value="enviar">
                         </div>
                 </div>
 
-                <div class="chat">
-                    <div class="chat-title">Chat</div>
-                        <textarea class="message-area" readonly="True"></textarea>
+                <div class="message">
+                    <div class="message-title">Chat</div>
+                        <textarea class="message-area" ></textarea>
                         <div class="row">
                             <input name="message" type="text">
                             <input type="submit" value="enviar">
@@ -58,7 +58,7 @@
             </div>
         </div>
             
-        <div class="col side-panel no-selectable">
+        <div class="col right-panel no-selectable">
             <div class="tool-panel">
                     <button class="tool-btn" id="pen">
                         <img class="tool-icon" src="{{ url_for('static', filename='img/pencil.svg') }}">
@@ -250,5 +250,4 @@
     }, 1000);
 
 </script>
-
 {% endblock %}
