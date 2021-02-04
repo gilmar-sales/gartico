@@ -84,6 +84,16 @@ def create_room():
 
     return redirect("/room/"+str(id))
 
+@socketio.on('connect')
+def connect():
+    print(request.event)
+    print(f"{session['nickname']} ({request.sid})  connected")
+
+@socketio.on('disconnect')
+def disconnect():
+    print(request.event)
+    print(request.sid + " disconnected")
+
 @socketio.on('join')
 def on_join(data):
     username = session['nickname']
@@ -100,11 +110,6 @@ def on_join(data):
         #start game with 2 or more players
         if(room.getPlayersCount() > 1 and not room.isPlaying()):
             room.start()
-
-@socketio.on('disconnect')
-def disconnect():
-    print(request.event)
-    print(request.sid + " disconnected")
 
 @socketio.on('leave')
 def on_leave(data):
@@ -203,6 +208,5 @@ def register():
 
     return render_template('register.html', error=error, success=success)
 
-#Debug
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
