@@ -1,4 +1,6 @@
+import os
 from mysql import connector
+
 
 
 # Singleton database class
@@ -39,10 +41,11 @@ class DB:
             DB.__instance = self
 
             DB.__db = connector.connect(
-                host='127.0.0.1',
-                user='root',
-                password='123456',
-                database='projeto_pp'
+                host=os.getenv('MYSQL_HOST'),
+                port=os.getenv('MYSQL_PORT'),
+                user=os.getenv('MYSQL_USERNAME'),
+                password=os.getenv('MYSQL_PASSWORD'),
+                database=os.getenv('MYSQL_DB')
             )
 
             DB.__cursor = DB.__db.cursor()
