@@ -31,6 +31,8 @@ class RemoteObject {
         (ev || window.event).returnValue = "Tem certeza que deseja sair?";
         (ev || window.event).preventDefault();
       });
+
+      return "Tem certeza que deseja sair?";
     });
 
     this.socket.on("check", () => {
