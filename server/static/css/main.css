@@ -1,47 +1,84 @@
 @font-face {
-    font-family: Type Grotesk;
-    src: url('/static/fonts/Typo Grotesk Rounded Demo.otf');
+  font-family: Type Grotesk;
+  src: url("/static/fonts/Typo Grotesk Rounded Demo.otf");
+}
+
+:root {
+  --primary-color: #286ace;
+  --secondary-color: #003688;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  box-sizing: border-box;
+  font-family: "Type Grotesk";
+  appearance: none;
+}
+
+*:focus {
+  outline: none;
+}
+
+h1 {
+  font-size: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
 }
 
 body {
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #111;
-    font-family: 'Type Grotesk';
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    orientation: landscape;
+  display: flex;
+  align-items: center;
 }
 
 .container {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: min(1330px, 100%);
+  height: 100vh;
 }
 
+button,
+input[type="submit"] {
+  background-color: var(--secondary-color);
+  color: white;
+  cursor: pointer;
 
-button {
-    height: 40px;
-    font-family: 'Type Grotesk';
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #cb2020;
-    color: white;
-    cursor: pointer;
-    border-style: none;
-    border-radius: 5px;
-    margin: 5px;
+  padding: 0.75rem;
+  border-style: none;
+  border-radius: 0.5rem;
+  appearance: none;
 }
 
 button:hover {
-    background-color: #fa4a4a;
+  background-color: var(--secondary-color);
+  filter: brightness(1.3);
 }
 
 button a {
-    color: white;
-    text-decoration: none;
+  color: white;
+  text-decoration: none;
+}
+
+.row input[type="text"] {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border: 1px var(--secondary-color) solid;
+}
+.row input[type="submit"] {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 0.5rem;
+  border: 1px var(--secondary-color) solid;
+}
+
+@media screen and (max-width: 768px) {
+  * {
+    font-size: 0.8rem;
+  }
+}
+@media screen and (min-width: 1280px) {
+  * {
+    font-size: 1rem;
+  }
 }
