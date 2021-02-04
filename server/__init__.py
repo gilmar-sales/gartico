@@ -125,7 +125,6 @@ def invoke(data):
     room = room_list.get(int(data['room']))
 
     if(room):
-        if data['packet']:
             room.addCommand(data)    
 
     emit("invoke method", data, include_self=False, room = int(data['room']))
