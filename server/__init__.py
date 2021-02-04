@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from server.room import room_list, Room
