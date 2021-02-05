@@ -1,8 +1,6 @@
 import os
 from mysql import connector
 
-
-
 # Singleton database class
 class DB:
     __instance = None

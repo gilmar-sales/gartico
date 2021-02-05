@@ -1,17 +1,13 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask import render_template, request, redirect, url_for, session, flash
+from flask_socketio import emit, join_room, leave_room
 from server.room import room_list, Room
 from server.database import DB
 from server.account_controller import AccountController
+from server.app import app
+from server.socketio import socketio
 
-app = Flask(__name__)
-
-#Secret Key
-app.secret_key = "ferias"
-
-socketio = SocketIO(app)
-acc = AccountController(socketio)
+acc = AccountController()
 
 categorias = {}
 subcategorias = {}
@@ -61,7 +57,7 @@ def room(room_id):
     room = room_list.get(room_id)
 
     if(room):
-        if room.getPlayerByNick(session['nickname']):
+        if room.getPlayerByNick(session['nickname']): #TODO: reconnect
             return redirect(url_for('index'))
         else:
             return render_template('room.html', room_id = room_id, players = room.getPlayers())
@@ -81,7 +77,7 @@ def create_room():
         if(not room_list.get(id)):
             break
 
-    room_list.setdefault(id, Room(socketio, id, int(request.form['category']), int(request.form['subcategory'])))
+    room_list.setdefault(id, Room(id, int(request.form['category']), int(request.form['subcategory'])))
 
     return redirect("/room/"+str(id))
 
