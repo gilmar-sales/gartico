@@ -39,11 +39,11 @@ class DB:
             DB.__instance = self
 
             DB.__db = connector.connect(
-                host=os.getenv('MYSQL_HOST'),
-                port=os.getenv('MYSQL_PORT', 3306),
-                user=os.getenv('MYSQL_USERNAME'),
-                password=os.getenv('MYSQL_PASSWORD'),
-                database=os.getenv('MYSQL_DB')
+                host='127.0.0.1',
+                port=3306,
+                user='root',
+                password='123456',
+                database='projeto_pp'
             )
 
             DB.__cursor = DB.__db.cursor()
