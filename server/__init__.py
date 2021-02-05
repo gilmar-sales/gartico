@@ -88,11 +88,12 @@ def connect():
 @socketio.on('disconnect')
 def disconnect():
     sid_data = sid_list.get(request.sid)
-    room = room_list.get(int(sid_data['room']))
+    if sid_data:
+        room = room_list.get(int(sid_data['room']))
 
-    #update server room_list
-    if room:
-        room.removePlayer(request.sid)
+        #update server room_list
+        if room:
+            room.removePlayer(request.sid)
 
     sid_list.pop(request.sid)
     print(request.sid + " disconnected")
