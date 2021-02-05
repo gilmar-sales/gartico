@@ -15,6 +15,3 @@ class AccountController:
                 return redirect(url_for('login'))
         return wrap
 
-
-    def __init__(self, socketio):
-        self.socketio = socketio
