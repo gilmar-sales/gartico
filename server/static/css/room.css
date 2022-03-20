@@ -1,5 +1,7 @@
 .container {
   display: flex;
+  width: 100vw !important;
+  height: 100vh;
   justify-content: center;
   align-items: center;
   background-color: var(--primary-color);
@@ -11,6 +13,7 @@
   align-items: center;
   justify-content: space-between;
   background-color: var(--secondary-color);
+  color: white;
   padding: 0.8rem 1rem;
   grid-area: title;
   border-bottom: 2px var(--primary-color) dashed;
@@ -53,6 +56,11 @@
 .logo {
   width: 150px;
   align-self: center;
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: row;
 }
 
 .users-panel {
@@ -99,7 +107,7 @@
 }
 
 .center-panel {
-  grid-area: mid;
+  grid-area: right;
   border-right: 2px var(--secondary-color) dashed;
 }
 
@@ -107,7 +115,7 @@
   background-color: white;
   border-left: 1px gray solid;
   border-right: 1px gray solid;
-  grid-area: mid;
+  grid-area: right;
 }
 
 .bottom-center-pannel {
@@ -149,9 +157,9 @@
 
 .tool-panel {
   background-color: var(--secondary-color);
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  align-content: flex-start;
+  display: flex;
+  grid-area: left;
+  flex-wrap: wrap;
   border-radius: 10px;
   max-width: 200px;
 }
@@ -242,11 +250,18 @@
 
 @media screen and (orientation: landscape) {
   .game {
-    grid-template-columns: 1fr 2fr 1fr;
+    width: 1000px;
+    height: 600px;
+    grid-template-columns: 1fr 3fr;
     grid-template-rows: auto 1fr;
     grid-template-areas:
-      "title title title"
-      "left mid right";
+      "title title"
+      "left right";
+  }
+
+  .tool-panel {
+    flex-direction: column;
+    max-width: 50%;
   }
 }
 @media screen and (orientation: portrait) {
@@ -260,5 +275,10 @@
       "left"
       "mid"
       "right";
+  }
+
+  .tool-panel {
+    max-width: 100%;
+    flex-direction: row;
   }
 }

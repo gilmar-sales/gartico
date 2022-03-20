@@ -2,11 +2,9 @@ class Room extends RemoteObject {
   constructor(svg, protocol, domain, port, room) {
     super(protocol, domain, port, room);
 
-    this.observer = true;
     this.canvas = new SVGCanvas(svg);
     this.charCount = 0;
     this.tip = "";
-    this.drawer = false;
     this.countDown = 0;
   }
 
@@ -25,6 +23,12 @@ class Room extends RemoteObject {
     this.processed_packet = -1;
     this.packets = {};
     this.canvas.clear();
+    
+    if (!this.listener) {
+      document.getElementById('tool-panel').classList.remove('hidden')
+    } else {
+      document.getElementById('tool-panel').classList.add('hidden')
+    }
   }
 
   stop() {
@@ -33,7 +37,6 @@ class Room extends RemoteObject {
 
   setCountDown(countDown) {
     this.countDown = countDown;
-    console.log(countDown);
   }
 
   getCountDown() {
@@ -62,10 +65,6 @@ class Room extends RemoteObject {
     newPlayer.append(div);
 
     document.getElementById("players").append(newPlayer);
-  }
-
-  setDrawer(value) {
-    this.drawer = value;
   }
 
   appendAnswer(playerName, answer, status) {
@@ -127,10 +126,8 @@ class Room extends RemoteObject {
         tip += "_ ";
       }
 
-      tip += "<br>";
-      tip += " ";
+      tip += "&nbsp;";
     }
-    console.log(tip);
     document.getElementById("tips").innerHTML = tip;
   }
 

@@ -288,6 +288,10 @@ class SVGCanvas { // extends RemoteObject
                 this.current_draw = new Stroke(this.svg, 5, this.color);
                 this.current_draw.draw(x, y);
             break;
+            case tools.eraser:
+                this.current_draw = new Stroke(this.svg, 5, 'white');
+                this.current_draw.draw(x, y);
+            break;
             case tools.rectangle:
                 this.current_draw = new Rectangle(this.svg, 5, this.color);
                 this.current_draw.draw(x,y);

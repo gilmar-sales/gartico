@@ -22,21 +22,69 @@
     <div class="game">
         <div class='game-title'>
             <h1 class="room_logo">Gartico</h1>
+
+            <h3 id="tips">Aguardando jogadores</h3>
+            <div class="row">
+                <h3>Tempo:</h3>
+                <h3 id="countdown"></3>
+            </div>
             <a class="button" href="/"><i class="fas fa-sign-out-alt fa-lg"></i></a>
         </div>
-        <div class="users-panel col no-selectable">
-            <i id="user-img" class="fas fa-user-circle fa-3x user-img" style="z-index: -1; position: fixed;"></i>
-            <ul id="players">
-                {% for player in players %}
-                <li id="{{ player }}" class="row">
-                    <i class="fas fa-user-circle fa-3x user-img"></i>
-                    <div class="col">
-                        <a class="user-name">{{ player }}</a>
-                        <a id="pts-{{ player }}" class="user-rank">0pts</a>
-                    </div>
-                </li>
-                {% endfor %}
-            </ul>
+        <div class="left-panel">
+            <div class="users-panel col no-selectable">
+                <i id="user-img" class="fas fa-user-circle fa-3x user-img" style="z-index: -1; position: fixed;"></i>
+                <ul id="players">
+                    {% for player in players %}
+                    <li id="{{ player }}" class="row">
+                        <i class="fas fa-user-circle fa-3x user-img"></i>
+                        <div class="col">
+                            <a class="user-name">{{ player }}</a>
+                            <a id="pts-{{ player }}" class="user-rank">0pts</a>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="tool-panel" class="tool-panel hidden">
+                <button class="tool-btn" id="pen">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/pencil.svg') }}">
+                    <span class="tooltip">Pencil</span>    
+                </button>
+                <button class="tool-btn" id="eraser">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/eraser.svg') }}">
+                    <span class="tooltip">Eraser</span>    
+                </button>
+                <button class="tool-btn" id="undo">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/undo.svg') }}">
+                    <span class="tooltip">Undo</span>    
+                </button>
+                <button class="tool-btn" id="redo">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/redo.svg') }}">
+                    <span class="tooltip">Redo</span>    
+                </button>
+                <button class="tool-btn" id="rectangle">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/square.svg') }}">
+                    <span class="tooltip">Rectangle</span>    
+                </button>
+                <button class="tool-btn" id="ellipse">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/ellipse.svg') }}">
+                    <span class="tooltip">Ellipse</span>    
+                </button>
+                <button class="tool-btn" id="triangle">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/triangle.svg') }}">
+                    <span class="tooltip">Triangle</span>    
+                </button>
+                <button class="tool-btn" id="clear">
+                    <img class="tool-icon" src="{{ url_for('static', filename='img/clear.svg') }}">
+                    <span class="tooltip">Clear</span>    
+                </button>
+                
+                <div class="tool-btn">
+                    <div class="color-picker"></div>
+                    <span class="tooltip">Color</span>    
+                </div>
+        </div>
         </div>
 
         <div class="col center-panel">
@@ -61,54 +109,6 @@
                             <input id="message" class="input-text" type="text">
                         </div>
                 </div>
-            </div>
-        </div>
-            
-        <div class="col right-panel no-selectable">
-            <div class="tool-panel">
-                    <button class="tool-btn" id="pen">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/pencil.svg') }}">
-                        <span class="tooltip">Pencil</span>    
-                    </button>
-                    <button class="tool-btn" id="eraser">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/eraser.svg') }}">
-                        <span class="tooltip">Eraser</span>    
-                    </button>
-                    <button class="tool-btn" id="undo">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/undo.svg') }}">
-                        <span class="tooltip">Undo</span>    
-                    </button>
-                    <button class="tool-btn" id="redo">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/redo.svg') }}">
-                        <span class="tooltip">Redo</span>    
-                    </button>
-                    <button class="tool-btn" id="rectangle">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/square.svg') }}">
-                        <span class="tooltip">Rectangle</span>    
-                    </button>
-                    <button class="tool-btn" id="ellipse">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/ellipse.svg') }}">
-                        <span class="tooltip">Ellipse</span>    
-                    </button>
-                    <button class="tool-btn" id="triangle">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/triangle.svg') }}">
-                        <span class="tooltip">Triangle</span>    
-                    </button>
-                    <button class="tool-btn" id="clear">
-                        <img class="tool-icon" src="{{ url_for('static', filename='img/clear.svg') }}">
-                        <span class="tooltip">Clear</span>    
-                    </button>
-                    
-                    <div class="tool-btn">
-                        <div class="color-picker"></div>
-                        <span class="tooltip">Color</span>    
-                    </div>
-            </div>
-
-            <h3 id="tips" style="text-align: center;">Aguardando jogadores</h3>
-            <div class="row" style="align-content: center;">
-                <h3>Tempo:</h3>
-                <h3 id="countdown"></3>
             </div>
         </div>
     </div>
@@ -233,6 +233,10 @@
         room.callCanvas('setTool', 'pen');
     }
 
+    document.querySelector('#eraser').onclick = () => {
+        room.callCanvas('setTool', 'eraser');
+    }
+
     document.querySelector('#rectangle').onclick = () => {
         room.callCanvas('setTool', 'rectangle');
     }
@@ -243,10 +247,6 @@
     
     document.querySelector('#triangle').onclick = () => {
         room.callCanvas('setTool', 'triangle');
-    }
-
-    document.querySelector('#eraser').onclick = () => {
-        room.callCanvas('setTool', 'ertriangleaser');
     }
 
     document.querySelector('#clear').onclick = () => {
