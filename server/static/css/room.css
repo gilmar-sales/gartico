@@ -106,16 +106,11 @@
   color: #cacaca;
 }
 
-.center-panel {
-  grid-area: right;
-  border-right: 2px var(--secondary-color) dashed;
-}
-
 .canvas {
   background-color: white;
-  border-left: 1px gray solid;
-  border-right: 1px gray solid;
   grid-area: right;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .bottom-center-pannel {
@@ -124,35 +119,28 @@
   overflow: hidden;
 }
 
-.message {
-  display: grid;
-  grid-template-rows: 1fr 4fr 1fr;
-  background-color: var(--primary-color);
-}
-
 .message-title {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  background-color: var(--primary-color);
+  background-color: white;
+  color: var(--primary-color);
+  border-top: 2px var(--secondary-color) dashed;
 }
 
 .message-area {
   width: 100%;
-  height: 10rem;
+  height: 8rem;
   background-color: white;
   resize: none;
   overflow: auto;
-  border: 1px gray solid;
 }
 
 .right-panel {
-  padding: 20px 10px;
   flex-direction: column;
   grid-area: right;
+  padding: 10px;
 }
 
 .tool-panel {
@@ -160,7 +148,6 @@
   display: flex;
   grid-area: left;
   flex-wrap: wrap;
-  border-radius: 10px;
   max-width: 200px;
 }
 
@@ -251,7 +238,6 @@
 @media screen and (orientation: landscape) {
   .game {
     width: 1000px;
-    height: 600px;
     grid-template-columns: 1fr 3fr;
     grid-template-rows: auto 1fr;
     grid-template-areas:
