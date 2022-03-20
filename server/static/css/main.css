@@ -6,6 +6,7 @@
 :root {
   --primary-color: #286ace;
   --secondary-color: #003688;
+  --background-color: #5696f7;  
 }
 
 * {
@@ -31,11 +32,7 @@ h2 {
 body {
   display: flex;
   align-items: center;
-}
-
-.container {
-  width: 100vw;
-  height: 100vh;
+  background-color: var(--background-color);
 }
 
 button,
@@ -68,4 +65,8 @@ input[type="submit"]:hover,
   * {
     font-size: 1rem;
   }
+}
+
+.hidden {
+  display: none !important;
 }
